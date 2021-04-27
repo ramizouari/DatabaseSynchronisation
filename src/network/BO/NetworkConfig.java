@@ -5,22 +5,20 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import dba.DBConnection;
+import network.GlobalNetworkConfig;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
-public class NetworkConfig {
-
+public class NetworkConfig
+{
     private ConnectionFactory factory;
-    private String host = "51.144.40.231" ;
     private Connection connection ;
     private Channel channel  ;
     private String outgoingQueue ;
     private DBConnection dbConnection;
-
-
 
     public void closeBo() throws IOException,TimeoutException
     {
@@ -38,7 +36,7 @@ public class NetworkConfig {
     public void initConnection () throws IOException,TimeoutException
     {
         factory = new ConnectionFactory() ;
-        factory.setHost(host);
+        factory.setHost(GlobalNetworkConfig.RABBITMQ_HOST);
         initOutgoingConnection(factory);
     }
 
@@ -47,19 +45,15 @@ public class NetworkConfig {
     {
         connection = factory.newConnection();
         channel = connection.createChannel();
-        channel.queueDeclare(outgoingQueue, false, false, false, null);
+        channel.queueDeclare(GlobalNetworkConfig.UPWARD_QUEUE_NAME, true, false, false, null);
         System.out.println("Ready to send messages from "+ outgoingQueue);
     }
     public void publishMessage(byte [] byteArray) throws IOException
     {
             AMQP.BasicProperties.Builder builder=new AMQP.BasicProperties.Builder();
             Map<String,Object> header=new HashMap<String,Object>();
-            header.put("schema",dbConnection.getSchema());
+            header.put("office",dbConnection.getSchema());
             builder.headers(header);
-            System.out.println("Sending...");
-            this.channel.basicPublish("", outgoingQueue, builder.build(),byteArray);
+            this.channel.basicPublish("", GlobalNetworkConfig.UPWARD_QUEUE_NAME, builder.build(),byteArray);
     }
-
-
-
 }

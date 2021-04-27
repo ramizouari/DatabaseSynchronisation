@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 public class IndexedTableRepository<IDType> extends TableRepository
 {
-    private String idName;
+    protected String idName;
     static private Set<String>appendID(String ID,Set<String> S)
     {
         S.add(ID);
@@ -14,34 +14,34 @@ public class IndexedTableRepository<IDType> extends TableRepository
     }
     public IndexedTableRepository(String tName,String IDName, Set<String> C) throws SQLException
     {
-        super(tName,appendID(IDName,C));
+        super(tName,C);
         idName=IDName;
     }
 
     public IndexedTableRepository(String tName,String IDName, String ...cols) throws SQLException
     {
-        super(tName,appendID(IDName, Arrays.stream(cols).collect(Collectors.toSet())));
+        super(tName,cols);
         idName=IDName;
     }
 
-    public Optional<Map<String,String>> findById(String id) throws SQLException
+    public Optional<Map<String,String>> findByIdMap(String id) throws SQLException
     {
         return findWhereEqual(idName,id).stream().findAny();
     }
 
     public Optional<Map<String,String>> findByIdMap(IDType id) throws SQLException
     {
-        return findById(String.valueOf(id));
+        return findByIdMap(id.toString());
     }
 
     public Integer removeById(String id) throws SQLException
     {
-        return dropWhereEqual(idName,id);
+        return deleteWhereEqual(idName,id);
     }
 
     public Integer removeById(IDType id) throws SQLException
     {
-        return dropWhereEqual(idName,id.toString());
+        return deleteWhereEqual(idName,id.toString());
     }
 
     public Integer updateById(IDType id,Map<String,String> updater) throws SQLException {

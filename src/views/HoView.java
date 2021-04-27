@@ -1,18 +1,18 @@
 package views;
 
-import model.Sale;
-import model.SalesTableModel;
+import dba.DBConnection;
+import model.HO.Sale;
+import model.HO.SalesTableModel;
+import network.GlobalNetworkConfig;
 import network.HO.NetworkConfig;
-
+import repository.HO.SaleRepository;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeoutException;
-
 
 /**
  *
@@ -23,77 +23,67 @@ import java.util.concurrent.TimeoutException;
  *  We will probably create a two way queue for each BO , since we need to change both HO and BO on each synchronization
  *
  */
-public class HoView extends JFrame {
+public class HoView extends MainWindow {
 
-    private JPanel contentPane;
-    private SalesTableModel model = new SalesTableModel(new ArrayList<Sale>()) ;
-    private JTable table = new JTable(model);
-
-
-    private JMenuBar menuBar = new JMenuBar()  ;
-    private JMenu addMenu = new JMenu ("Add") ;
-    private JMenuItem addMI = new JMenuItem ("Add Sale");
-    private JMenuItem openMI = new JMenuItem("Open") ;
-    private JMenuItem exitMI = new JMenuItem("Exit") ;
-
-    private JMenuItem changesMI=new JMenuItem("get Latest changes") ;
-    private JMenu networkMenu = new JMenu("Network") ;
-    private
-    NetworkConfig networkConfig;
-
+    SalesTableModel model;
+    private SaleRepository saleRepository;
+    private NetworkConfig networkConfig;
     public HoView()
     {
-        this.setTitle("HO App");
+        model = new SalesTableModel(new ArrayList<Sale>());
+        table = new JTable(model);
 
-        contentPane = new JPanel();
-        contentPane.setBorder(new EmptyBorder(7, 7, 7, 7));
-        contentPane.setLayout(new BorderLayout(0, 0));
-        setContentPane(contentPane);
+        this.setTitle("Head Office App");
+
+        JScrollPane scrollpane = new JScrollPane(table) ;
+        contentPane.add(scrollpane);
+        //BAR START
+
+        try
+        {
+            saleRepository=new repository.HO.SaleRepository();
+        }
+        catch(SQLException exc)
+        {
+            System.err.println(exc.getMessage());
+            JOptionPane.showMessageDialog(this,exc.getMessage(),"Error",JOptionPane.ERROR);
+        }
+
         try {
-            networkConfig=new NetworkConfig(this);
+            networkConfig=new NetworkConfig(this,saleRepository);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (TimeoutException e) {
             e.printStackTrace();
         }
-
-        //BAR START
-        changesMI.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        pullMI.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e)
+            {
+                try
+                {
+                    model.clear();
+                    saleRepository.findAll().forEach(S->model.addRow((Sale)S));
+                }
+                catch (SQLException exc)
+                {
+                    System.err.println(exc.getMessage());
+                    JOptionPane.showMessageDialog(HoView.this,"Synchronization Error","Unable to receive Synchronized Data",JOptionPane.ERROR);
+                }
             }
         });
-        networkMenu.add(changesMI)  ;
 
         addMI.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
             }
         });
-        addMenu.add(addMI) ;
-
-        menuBar.add(addMenu) ;
-        menuBar.add(networkMenu) ;
-
-        this.setJMenuBar(menuBar);
-        //BAR FINISH
-
-        model.addRow(new Sale("01-04-2021","East","Paper",73,12.95,66.17));
-        model.addRow(new Sale("01-04-2021", "West", "Paper", 33,12.95,29.91));
-        model.addRow(new Sale("02-04-2021","East", "Pens", 14, 2.19,2.15));
-        model.addRow(new Sale("02-04-2021", "West", "Pens", 40, 2.19, 6.13));
-        model.addRow(new Sale("03-04-2021", "East", "Paper", 21, 12.95, 19.04));
-        model.addRow(new Sale("03-04-2021", "West", "Paper", 10, 12.95,9.07));
-
-        JScrollPane scrollpane = new JScrollPane(table) ;
-        contentPane.add(scrollpane);
-
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
     }
 
 
     public static void main(String[] args)
     {
+        DBConnection.configure(GlobalNetworkConfig.DB_HOST,"HO","HO","ho0000");
         HoView app= new HoView() ;
 
         app.pack();

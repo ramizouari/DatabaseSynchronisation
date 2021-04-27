@@ -1,15 +1,16 @@
-package model;
+package model.BO;
 
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
+import model.AbstractSale;
+import model.AbstractSalesTableModel;
+
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 
-public class SalesTableModel extends AbstractTableModel {
+public class SalesTableModel extends AbstractTableModel
+{
+    ArrayList<Sale> sales ;
 
-    ArrayList <Sale> sales ;
-
-    final String[] columnNames={"Product ID","Date", "Region", "Product", "Qty","Cost","Amt","Tax","Total"};
+    String[] columnNames={"Sale ID","Date", "Region", "Product", "Qty","Cost","Amt","Tax","Total"};
 
     public SalesTableModel(ArrayList<Sale> sales)
     {
@@ -29,19 +30,19 @@ public class SalesTableModel extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int columnIndex) {
 
         Object result = null ;
-
+        AbstractSale sale = sales.get(rowIndex);
         switch (columnIndex)
         {
-            case 0 : result = sales.get(rowIndex).getId(); break;
-            case 1 : result = sales.get(rowIndex).getDate(); break;
-            case 2 : result = sales.get(rowIndex).getRegion(); break ;
-            case 3 : result = sales.get(rowIndex).getProduct(); break ;
-            case 4 : result = sales.get(rowIndex).getQuantity();break ;
-            case 5 : result = sales.get(rowIndex).getCost(); break ;
-            case 6 : result = sales.get(rowIndex).getCost()*sales.get(rowIndex).getQuantity(); break ;
-            case 7 : result = sales.get(rowIndex).getTax();break ;
-            case 8 : {double amount = sales.get(rowIndex).getCost()*sales.get(rowIndex).getQuantity();
-                     result = amount + sales.get(rowIndex).getTax();}
+            case 0 : result = sale.getId(); break;
+            case 1 : result = sale.getDate(); break;
+            case 2 : result = sale.getRegion(); break ;
+            case 3 : result = sale.getProduct(); break ;
+            case 4 : result = sale.getQuantity();break ;
+            case 5 : result = sale.getCost(); break ;
+            case 6 : result = sale.getCost()*sale.getQuantity(); break ;
+            case 7 : result = sale.getTax();break ;
+            case 8 : {double amount = sale.getCost()*sale.getQuantity();
+                result = amount + sale.getTax();}
         }
         return result;
     }
@@ -78,5 +79,4 @@ public class SalesTableModel extends AbstractTableModel {
     {
         sales.clear();
     }
-
 }

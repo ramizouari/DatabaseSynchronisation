@@ -60,6 +60,8 @@ public class SalesTableModel extends AbstractSalesTableModel
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex)
     {
+        if(rowIndex>=sales.size())
+            return;
         Sale S = (Sale)sales.get(rowIndex);
         try {
 
@@ -150,7 +152,7 @@ public class SalesTableModel extends AbstractSalesTableModel
     }
     public int remove(int row)
     {
-        if(row == -1)
+        if(row < 0 ||row >= sales.size())
             return -1;
         registerDeleteId(sales.get(row).getId());
         sales.remove(sales.get(row));

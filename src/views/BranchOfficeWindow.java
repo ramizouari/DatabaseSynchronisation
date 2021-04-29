@@ -48,13 +48,15 @@ public class BranchOfficeWindow extends MainWindow{
         operationsMenu.add(synchronizeMI);
         editMenu.setMnemonic(KeyEvent.VK_E);
         addMI.setMnemonic(KeyEvent.VK_A);
-        addMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.ALT_MASK));
-        removeMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.ALT_MASK));
+        addMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A,
+                ActionEvent.CTRL_MASK|ActionEvent.SHIFT_MASK));
+        removeMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D,
+                ActionEvent.CTRL_MASK|ActionEvent.SHIFT_MASK));
         removeMI.setMnemonic(KeyEvent.VK_R);
         pushMI.setMnemonic(KeyEvent.VK_S);
         synchronizeMI.setMnemonic(KeyEvent.VK_Y);
-        pushMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.ALT_MASK));
-        synchronizeMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, ActionEvent.ALT_MASK));
+        pushMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
+        synchronizeMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, ActionEvent.CTRL_MASK));
 
         this.setTitle("Branch Office %c App".formatted(officeName.charAt(officeName.length()-1)));
 

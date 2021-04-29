@@ -1,5 +1,7 @@
 package dba;
 
+import network.GlobalNetworkConfig;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -18,8 +20,7 @@ public class DBConnection
     }
     private DBConnection(String host,String sch,String u,String p) throws SQLException
     {
-        connection=DriverManager.getConnection(
-                String.format("jdbc:mysql://%s/%s",host,sch),u,p);
+        connection=DriverManager.getConnection( GlobalNetworkConfig.DB_DRIVER+host+'/'+sch,u,p);
         p=null;
     }
 

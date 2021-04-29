@@ -7,7 +7,7 @@ import com.rabbitmq.client.DeliverCallback;
 import model.HO.Sale;
 import network.GlobalNetworkConfig;
 import utils.Serializer;
-import views.HoView;
+import views.HeadOfficeWindow;
 import javax.swing.*;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -26,7 +26,7 @@ public class NetworkConfig
     private String[] queues;
     private SaleRepository saleRepository;
 
-    private HoView hoView;
+    private HeadOfficeWindow headOfficeWindow;
     public void closeHo() throws IOException ,TimeoutException{
         System.out.println("Closing HO...");
         connection.close();
@@ -34,10 +34,10 @@ public class NetworkConfig
     }
 
 
-    public NetworkConfig(HoView hoView,SaleRepository repo) throws IOException,TimeoutException
+    public NetworkConfig(HeadOfficeWindow headOfficeWindow, SaleRepository repo) throws IOException,TimeoutException
     {
         queues =new String[]{"queue-bo1"};
-        this.hoView=hoView ;
+        this.headOfficeWindow = headOfficeWindow;
         this.initGlobalSettings() ;
         saleRepository=repo;
     }
@@ -69,12 +69,12 @@ public class NetworkConfig
                     for(Sale s:saleDB)
                         saleRepository.save(s);
                 } catch (ClassNotFoundException e) {
-                    JOptionPane.showMessageDialog(hoView,"Corrupted Data","Data Received is corrupted",JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(headOfficeWindow,"Corrupted Data","Data Received is corrupted",JOptionPane.ERROR_MESSAGE);
                     System.err.println(e.getMessage());
                 }
                 catch (SQLException e)
                 {
-                    JOptionPane.showMessageDialog(hoView,"Update Error","Unable to update with received content",JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(headOfficeWindow,"Update Error","Unable to update with received content",JOptionPane.ERROR_MESSAGE);
                     System.err.println(e.getMessage());
                 }
                 //serverView.updateText(queueName.equals("incoming-text1")?1:2,byteArray );

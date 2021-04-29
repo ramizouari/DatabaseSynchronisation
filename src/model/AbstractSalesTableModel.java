@@ -1,6 +1,7 @@
 package model;
 
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,6 +56,10 @@ abstract public class AbstractSalesTableModel extends AbstractTableModel {
     public void clear()
     {
         sales.clear();
+    }
+    public List<AbstractSale> getAllValues()
+    {
+        return sales;
     }
 
 }

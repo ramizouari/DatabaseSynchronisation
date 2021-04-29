@@ -14,21 +14,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeoutException;
 
-/**
- *
- * TODO  :
- *  Create Sql operations class with different operations (getAll,insert...) + import data to View on startup
- *  Create a JSON based Serializer
- *  Create the Update View function (Both for HO and BO)
- *  We will probably create a two way queue for each BO , since we need to change both HO and BO on each synchronization
- *
- */
-public class HoView extends MainWindow {
+public class HeadOfficeWindow extends MainWindow {
 
     SalesTableModel model;
     private SaleRepository saleRepository;
     private NetworkConfig networkConfig;
-    public HoView()
+    public HeadOfficeWindow()
     {
         model = new SalesTableModel(new ArrayList<Sale>());
         table = new JTable(model);
@@ -47,6 +38,14 @@ public class HoView extends MainWindow {
         {
             System.err.println(exc.getMessage());
             JOptionPane.showMessageDialog(this,exc.getMessage(),"Error",JOptionPane.ERROR);
+        }
+        try {
+            saleRepository.findAll().forEach(S -> model.addRow((Sale)S));
+        }
+        catch(SQLException exc)
+        {
+            System.err.println(exc.getMessage());
+            JOptionPane.showMessageDialog(this,"Unable to read data from Database","Database Error",JOptionPane.ERROR_MESSAGE);
         }
 
         try {
@@ -67,24 +66,17 @@ public class HoView extends MainWindow {
                 catch (SQLException exc)
                 {
                     System.err.println(exc.getMessage());
-                    JOptionPane.showMessageDialog(HoView.this,"Synchronization Error","Unable to receive Synchronized Data",JOptionPane.ERROR);
+                    JOptionPane.showMessageDialog(HeadOfficeWindow.this,"Synchronization Error","Unable to receive Synchronized Data",JOptionPane.ERROR);
                 }
             }
         });
-
-        addMI.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-            }
-        });
-
     }
 
 
     public static void main(String[] args)
     {
         DBConnection.configure(GlobalNetworkConfig.DB_HOST,"HO","HO","ho0000");
-        HoView app= new HoView() ;
+        HeadOfficeWindow app= new HeadOfficeWindow() ;
 
         app.pack();
         app.setVisible(true);

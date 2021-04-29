@@ -15,15 +15,6 @@ public class SalesTableModel extends AbstractSalesTableModel {
         super(new String[]{"Office Name","Sale ID","Date", "Region", "Product", "Qty","Cost","Amt","Tax","Total"},
                 sales.stream().map(S->(AbstractSale)S).collect(Collectors.toList()));
     }
-    @Override
-    public int getRowCount() {
-        return sales.size();
-    }
-
-    @Override
-    public int getColumnCount() {
-        return columnNames.length;
-    }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
@@ -49,36 +40,4 @@ public class SalesTableModel extends AbstractSalesTableModel {
         return result;
     }
 
-
-    @Override
-    public String getColumnName(int column) {
-        return columnNames[column];
-    }
-
-    /**
-     * Adds Element to list and update the model
-     * @param sale
-     */
-    public void addRow(Sale sale)
-    {
-        sales.add(sale) ;
-        fireTableRowsInserted(sales.size() - 1, sales.size() - 1);
-    }
-
-
-    /**
-     * Update the whole model
-     */
-    public void updateAll()
-    {
-        fireTableDataChanged();
-    }
-
-    /**
-     * Clear All fields
-     */
-    public void clear()
-    {
-        sales.clear();
-    }
 }

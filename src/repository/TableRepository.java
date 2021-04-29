@@ -31,7 +31,6 @@ abstract public class TableRepository
     public Collection<Map<String,String>> fetchAll() throws SQLException
     {
         PreparedStatement statement=connection.prepareStatement("SELECT * FROM "+tableName);
-        System.out.println(statement.toString());
         ResultSet set = statement.executeQuery();
         Vector<Map<String,String>> results=new Vector<Map<String,String>>();
         while(set.next())
@@ -45,7 +44,7 @@ abstract public class TableRepository
     }
 
     /*
-    * This method will return a list of values of a given tuple
+    * This method will return a list of values of a given tuple:
     * TODO:
     *  Add support for escaped ','
     * */
@@ -75,7 +74,6 @@ abstract public class TableRepository
             for(String v:V)
                 statement.setString(k++,v);
         }
-        System.err.println(statement.toString());
         ResultSet set = statement.executeQuery();
         Vector<Map<String,String>> results=new Vector<Map<String,String>>();
         while(set.next())
@@ -109,7 +107,6 @@ abstract public class TableRepository
         int k=1;
         for(String value: colMap.values())
             statement.setString(k++,value);
-        System.err.println(statement.toString());
         return statement.executeUpdate();
     }
 
@@ -135,8 +132,7 @@ abstract public class TableRepository
         builder.setCharAt(builder.length()-1,' ');
         builder.append(whereClause);
         PreparedStatement statement=connection.prepareStatement(builder.toString());
-        statement.setString(1,tableName);
-        int k=2;
+        int k=1;
         for(String col: colMap.keySet())
             statement.setString(k++,colMap.get(col));
         for(String v:V)
